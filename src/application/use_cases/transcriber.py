@@ -4,19 +4,14 @@ from infrastructure.interfaces.message_broker import MessageBroker
 from domain.transcription import Transcription
 
 class TranscribeUseCase:
-    def __init__(self, downloader: Downloader, transcriber: Transcriber, broker: MessageBroker):
-        self.downloader = downloader
+    def __init__(self, transcriber: Transcriber):
         self.transcriber = transcriber
-        self.broker = broker
 
-    async def execute(self, url: str) -> Transcription:
+    async def execute(self, audio_path: str) -> Transcription:
         """Interface principal, publica a URL na fila."""
         # await self.publish_url(url)
-        print("Cheguei at[e aqui]", url)
+    
+        text = self.transcriber.transcribe(f"{audio_path}.mp3")
 
-        output_path = self.downloader.download_audio(url)
-        text = self.transcriber.transcribe(output_path)
 
-        print(text)
-
-        return Transcription(text=text, url=url)
+        return Transcription(text=text, audio_path=audio_path)
