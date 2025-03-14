@@ -3,6 +3,7 @@ import asyncio
 from infrastructure.interfaces.message_broker import MessageBroker
 import json
 
+
 class RabbitMQ(MessageBroker):
     _instance = None
     _url = None
@@ -24,7 +25,9 @@ class RabbitMQ(MessageBroker):
         if cls._connection is None:
             cls._url = url
         else:
-            raise RuntimeError("A conexão já foi estabelecida. Não é possível alterar a URL.")
+            raise RuntimeError(
+                "A conexão já foi estabelecida. Não é possível alterar a URL."
+            )
 
     async def connection(self):
         async with self._lock:
@@ -58,19 +61,14 @@ class RabbitMQ(MessageBroker):
             RabbitMQ._channel = None
             raise
 
-    async def publish(self, queue: str, message: dict):
+    async def publish(self, queue: str, message: aio_pika.Message):
         try:
             channel = await self.get_channel()
             # Declara a fila
-            queue_obj = await channel.declare_queue(queue, durable=True)
+            # queue_obj = await channel.declare_queue(queue, durable=True)
             # Publica a mensagem serializada
-            await channel.default_exchange.publish(
-                aio_pika.Message(
-                    body=json.dumps(message).encode(),
-                    delivery_mode=aio_pika.DeliveryMode.PERSISTENT
-                ),
-                routing_key=queue
-            )
+            print(message)
+            await channel.default_exchange.publish(message=message, routing_key=queue)
             print(f"Mensagem publicada na fila '{queue}': {message}")
         except Exception as e:
             print(f"Erro ao publicar mensagem no RabbitMQ: {e}")
