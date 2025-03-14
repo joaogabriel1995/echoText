@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class Transcription:
     text: str
@@ -10,7 +11,4 @@ class Transcription:
         self.audio_path = audio_path
 
     def to_dict(self):
-        return {
-            "text": self.text,
-            "audio_path": self.audio_path
-    }
+        return {"text": self.text, "audio_path": self.audio_path}
