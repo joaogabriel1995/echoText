@@ -1,8 +1,10 @@
 import os
 
+
 class Settings:
     TEMP_DIR = "temp_audio"
     WHISPER_MODEL = "small"  # Opções: tiny, base, small, medium, large
+
 
 settings = Settings()
 
